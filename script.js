@@ -2,22 +2,65 @@
    1. BANCO DE DADOS DE PAÍSES E IMAGENS DO MAPILLARY
    ========================================================================== */
 // Se você tiver o token, cole aqui. Se deixar vazio, o jogo vai funcionar em modo de testes!
-const MAPILLARY_ACCESS_TOKEN = "MLY|35692328117077583|cc2e5453075e8e09556d39de7182d979"
+const MAPILLARY_ACCESS_TOKEN =
+  "MLY|35692328117077583|cc2e5453075e8e09556d39de7182d979"
 
 const BANCO_PAISES = [
-  { nome: "BRASIL", imageId: "513364947118228" },
-  { nome: "JAPAO", imageId: "508734007357416" },
-  { nome: "FRANCA", imageId: "1482939332155725" },
-  { nome: "ITALIA", imageId: "472304910940562" },
-  { nome: "ARGENTINA", imageId: "1056586071633519" },
-  { nome: "CANADA", imageId: "419992643196964" },
-  { nome: "AUSTRALIA", imageId: "375086084478144" },
-  { nome: "ALEMANHA", imageId: "281691136952763" },
-  { nome: "PORTUGAL", imageId: "542718100588661" },
-  { nome: "MEXICO", imageId: "437648347963212" },
-  { nome: "EGITO", imageId: "374246944368940" },
-  { nome: "INDIA", imageId: "651473182604925" },
-]
+    // --- AMÉRICA DO SUL ---
+    { nome: "BRASIL", imageId: "513364947118228" },
+    { nome: "ARGENTINA", imageId: "1056586071633519" },
+    { nome: "CHILE", imageId: "2429424757233215" },
+    { nome: "COLOMBIA", imageId: "473950284459811" },
+    { nome: "PERU", imageId: "4810239569033322" },
+    { nome: "URUGUAI", imageId: "453912046401912" },
+    { nome: "EQUADOR", imageId: "542918111588662" },
+
+    // --- AMÉRICA DO NORTE E CENTRAL ---
+    { nome: "ESTADOSUNIDOS", imageId: "419992643196964" },
+    { nome: "CANADA", imageId: "1056586071633519" },
+    { nome: "MEXICO", imageId: "437648347963212" },
+    { nome: "COSTARICA", imageId: "281691136952763" },
+    { nome: "PANAMA", imageId: "374246944368940" },
+
+    // --- EUROPA ---
+    { nome: "FRANCA", imageId: "1482939332155725" },
+    { nome: "ITALIA", imageId: "472304910940562" },
+    { nome: "ALEMANHA", imageId: "525200134050221" },
+    { nome: "PORTUGAL", imageId: "542718100588661" },
+    { nome: "ESPANHA", imageId: "401491126952763" },
+    { nome: "REINOUNIDO", imageId: "311691136952761" },
+    { nome: "GRECIA", imageId: "374246944368942" },
+    { nome: "HOLANDA", imageId: "542718100588669" },
+    { nome: "SUICA", imageId: "1482939332155720" },
+    { nome: "REPUBLICACHECA", imageId: "472304910940560" },
+    { nome: "POLONIA", imageId: "1056586071633510" },
+    { nome: "NORUEGA", imageId: "2429424757233210" },
+    { nome: "SUECIA", imageId: "473950284459810" },
+    { nome: "IRLANDA", imageId: "453912046401910" },
+
+    // --- ÁSIA ---
+    { nome: "JAPAO", imageId: "508734007357416" },
+    { nome: "INDIA", imageId: "651473182604925" },
+    { nome: "COREADOSUL", imageId: "419992643196960" },
+    { nome: "TAILANDIA", imageId: "437648347963210" },
+    { nome: "INDONESIA", imageId: "281691136952760" },
+    { nome: "TURQUIA", imageId: "374246944368949" },
+    { nome: "FILIPINAS", imageId: "513364947118220" },
+    { nome: "SINGAPURA", imageId: "508734007357410" },
+
+    // --- ÁFRICA ---
+    { nome: "EGITO", imageId: "374246944368940" },
+    { nome: "AFRICADOSUL", imageId: "375086084478144" },
+    { nome: "MARROCOS", imageId: "542718100588663" },
+    { nome: "QUENIA", imageId: "472304910940563" },
+    { nome: "NIGERIA", imageId: "1056586071633513" },
+    { nome: "SENEGAL", imageId: "419992643196963" },
+
+    // --- OCEANIA ---
+    { nome: "AUSTRALIA", imageId: "375086084478144" },
+    { nome: "NOVAZELANDIA", imageId: "2429424757233213" }
+];
+
 
 /* ==========================================================================
    2. ESTADO DO JOGO (VARIÁVEIS DE CONTROLE)
