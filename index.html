@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoTermo - Adivinhe o País</title>
+    <!-- O CSS será vinculado aqui no próximo passo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>GeoTermo</h1>
+        <div id="game-status">
+            <span id="score">Pontuação: 0</span>
+        </div>
+    </header>
+
+    <main id="game-container">
+        
+        <!-- FASE 1: Visualização do Mapa (GeoGuessr) -->
+        <section id="map-phase">
+            <div id="timer-container">
+                Tempo restante: <span id="countdown">30</span>s
+            </div>
+            <!-- Este contêiner vai carregar o Google Street View via API do JavaScript -->
+            <div id="street-view-container"></div>
+            <button id="skip-button">Pular Tempo</button>
+        </section>
+
+        <!-- FASE 2: Chute de Letras (Termo) -->
+        <!-- Esta seção começará oculta e o JS vai mostrá-la após os 30 segundos -->
+        <section id="guess-phase" class="hidden">
+            <h2>Qual é o país?</h2>
+            
+            <!-- Dica sobre o tamanho da palavra -->
+            <div id="word-hint">O país tem <span id="letter-count">0</span> letras.</div>
+
+            <!-- Grade de tentativas (estilo Termo) -->
+            <!-- O JavaScript vai gerar os quadradinhos dinamicamente aqui dentro -->
+            <div id="grid-container"></div>
+
+            <!-- Teclado virtual completo para cliques e feedback de cores -->
+            <div id="keyboard-container">
+                <div class="keyboard-row">
+                    <button class="key-btn" data-key="Q">Q</button>
+                    <button class="key-btn" data-key="W">W</button>
+                    <button class="key-btn" data-key="E">E</button>
+                    <button class="key-btn" data-key="R">R</button>
+                    <button class="key-btn" data-key="T">T</button>
+                    <button class="key-btn" data-key="Y">Y</button>
+                    <button class="key-btn" data-key="U">U</button>
+                    <button class="key-btn" data-key="I">I</button>
+                    <button class="key-btn" data-key="O">O</button>
+                    <button class="key-btn" data-key="P">P</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key-btn" data-key="A">A</button>
+                    <button class="key-btn" data-key="S">S</button>
+                    <button class="key-btn" data-key="D">D</button>
+                    <button class="key-btn" data-key="F">F</button>
+                    <button class="key-btn" data-key="G">G</button>
+                    <button class="key-btn" data-key="H">H</button>
+                    <button class="key-btn" data-key="J">J</button>
+                    <button class="key-btn" data-key="K">K</button>
+                    <button class="key-btn" data-key="L">L</button>
+                    <button class="key-btn" data-key="Ç">Ç</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key-btn special-key" data-key="ENTER">ENTER</button>
+                    <button class="key-btn" data-key="Z">Z</button>
+                    <button class="key-btn" data-key="X">X</button>
+                    <button class="key-btn" data-key="C">C</button>
+                    <button class="key-btn" data-key="V">V</button>
+                    <button class="key-btn" data-key="B">B</button>
+                    <button class="key-btn" data-key="N">N</button>
+                    <button class="key-btn" data-key="M">M</button>
+                    <button class="key-btn special-key" data-key="BACKSPACE">APAGAR</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Telas de Fim de Jogo (Vitória / Derrota) -->
+        <section id="modal-container" class="hidden">
+            <div class="modal-content">
+                <h3 id="modal-title">Resultado</h3>
+                <p id="modal-message"></p>
+                <button id="restart-button">Jogar Novamente</button>
+            </div>
+        </section>
+
+    </main>
+
+        <!-- Adicione estas duas linhas antes do seu script.js -->
+    <link href="https://unpkg.com" rel="stylesheet" />
+    <script src="https://unpkg.com"></script>
+
+    <script src="script.js"></script>
+ </body>
+</html>

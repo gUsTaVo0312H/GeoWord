@@ -1,0 +1,304 @@
+/* ==========================================================================
+   1. CONFIGURAÇÕES GERAIS E CORES (VARIÁVEIS)
+   ========================================================================== */
+:root {
+    --bg-color: #6e5c62;        /* Fundo principal (estilo Termo) */
+    --board-bg: #4c4346;        /* Fundo dos contêineres */
+    --text-color: #ffffff;
+    --key-bg: #4c4346;
+    
+    /* Cores de Feedback do Termo */
+    --color-correct: #3aa394;   /* Verde: Letra certa no lugar certo */
+    --color-present: #d3ad69;   /* Amarelo: Letra certa no lugar errado */
+    --color-absent: #312a2c;    /* Cinza Escuro: Letra não existe na palavra */
+    --color-empty: #615458;     /* Borda/Fundo de blocos vazios */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Classe utilitária para esconder elementos via JS */
+.hidden {
+    display: none !important;
+}
+
+/* ==========================================================================
+   2. CABEÇALHO
+   ========================================================================== */
+header {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 10px;
+    border-bottom: 2px solid var(--board-bg);
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+#game-status {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   3. CONTAINER PRINCIPAL DO JOGO
+   ========================================================================== */
+#game-container {
+    width: 100%;
+    max-width: 600px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+/* ==========================================================================
+   4. FASE 1: MAPA (GEOGUESSR)
+   ========================================================================== */
+#map-phase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 15px;
+}
+
+#timer-container {
+    font-size: 1.3rem;
+    font-weight: bold;
+    background-color: var(--board-bg);
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+#countdown {
+    color: var(--color-present);
+}
+
+#street-view-container {
+    width: 100%;
+    height: 400px; /* Altura ideal para telas de computadores e celulares */
+    border-radius: 12px;
+    background-color: #333; /* Fundo temporário enquanto a API do Maps não carrega */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+#skip-button {
+    background-color: var(--color-correct);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+#skip-button:active {
+    transform: scale(0.95);
+}
+
+/* ==========================================================================
+   5. FASE 2: CHUTES (TERMO)
+   ========================================================================== */
+#guess-phase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 15px;
+}
+
+#guess-phase h2 {
+    font-size: 1.5rem;
+}
+
+#word-hint {
+    font-size: 1rem;
+    color: #ccc;
+}
+
+/* Grade de Letras Dinâmica */
+#grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+/* Linha da Grade (Gerada por JS) */
+.grid-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+/* Cada quadradinho de letra (Gerada por JS) */
+.letter-tile {
+    width: 52px;
+    height: 52px;
+    border: 2px solid var(--color-empty);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+    user-select: none;
+}
+
+/* Classes de Estado que o JS vai aplicar nas letras/teclado */
+.tile-correct {
+    background-color: var(--color-correct);
+    border-color: var(--color-correct);
+}
+
+.tile-present {
+    background-color: var(--color-present);
+    border-color: var(--color-present);
+}
+
+.tile-absent {
+    background-color: var(--color-absent);
+    border-color: var(--color-absent);
+}
+
+/* Modificador para quando o usuário digita (borda destaca antes de enviar) */
+.tile-toggled {
+    border-color: #ffffff;
+}
+
+/* ==========================================================================
+   6. TECLADO VIRTUAL
+   ========================================================================== */
+#keyboard-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: auto; /* Empurra o teclado para o rodapé */
+    padding-top: 15px;
+}
+
+.keyboard-row {
+    display: flex;
+    width: 100%;
+    gap: 4px;
+    justify-content: center;
+}
+
+.key-btn {
+    flex: 1;
+    height: 58px;
+    background-color: var(--key-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    transition: background-color 0.1s ease;
+}
+
+.key-btn:active {
+    opacity: 0.7;
+}
+
+/* Botões maiores como ENTER e APAGAR */
+.special-key {
+    flex: 1.5;
+    font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   7. MODAL (TELA DE FIM DE JOGO)
+   ========================================================================== */
+#modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--board-bg);
+    padding: 30px;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#modal-title {
+    font-size: 2rem;
+}
+
+#modal-message {
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+#restart-button {
+    background-color: var(--color-correct);
+    color: white;
+    border: none;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   8. ADAPTAÇÕES PARA CELULARES PEQUENOS
+   ========================================================================== */
+@media (max-width: 400px) {
+    .letter-tile {
+        width: 42px;
+        height: 42px;
+        font-size: 1.5rem;
+    }
+    .key-btn {
+        height: 50px;
+        font-size: 0.95rem;
+    }
+    #street-view-container {
+        height: 300px;
+    }
+}
