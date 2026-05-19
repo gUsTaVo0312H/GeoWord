@@ -1,11 +1,9 @@
 /* ==========================================================================
    1. BANCO DE DADOS DE PAÍSES E IMAGENS DO MAPILLARY
    ========================================================================== */
-// Insira aqui o Token que você copiou do painel do Mapillary
-const MAPILLARY_ACCESS_TOKEN =
-  "MLY|35692328117077583|cc2e5453075e8e09556d39de7182d979"
+// Se você tiver o token, cole aqui. Se deixar vazio, o jogo vai funcionar em modo de testes!
+const MAPILLARY_ACCESS_TOKEN = "MLY|35692328117077583|cc2e5453075e8e09556d39de7182d979"
 
-// Lista de países com IDs de imagens reais e verificadas em 360º no Mapillary
 const BANCO_PAISES = [
   { nome: "BRASIL", imageId: "513364947118228" },
   { nome: "JAPAO", imageId: "508734007357416" },
@@ -31,9 +29,9 @@ let letraAtualIndex = 0
 let maxTentativas = 6
 let tempoRestante = 30
 let cronometroInterval = null
-let mlyViewer = null // Armazena a instância do visualizador Mapillary
+let mlyViewer = null
 
-// Elementos da Interface (DOM)
+// Elementos do DOM
 const mapPhaseSec = document.getElementById("map-phase")
 const guessPhaseSec = document.getElementById("guess-phase")
 const countdownEl = document.getElementById("countdown")
@@ -44,66 +42,97 @@ const modalContainer = document.getElementById("modal-container")
 const modalTitle = document.getElementById("modal-title")
 const modalMessage = document.getElementById("modal-message")
 const restartBtn = document.getElementById("restart-button")
+const viewContainer = document.getElementById("street-view-container")
 
 /* ==========================================================================
-   3. INICIALIZAÇÃO DO MAPILLARY
+   3. INICIALIZAÇÃO DO MAPILLARY (COM TRATAMENTO DE ERROS)
    ========================================================================== */
 function carregarMapillary(imageId) {
-  // Se já existir um mapa rodando, destrói para não pesar a memória
   if (mlyViewer) {
-    mlyViewer.remove()
+    try {
+      mlyViewer.remove()
+    } catch (e) {
+      console.log(e)
+    }
+    mlyViewer = null
   }
 
-  // Inicializa o visualizador dentro da div do HTML
-  mlyViewer = new mapillary.Viewer({
-    accessToken: MAPILLARY_ACCESS_TOKEN,
-    container: "street-view-container",
-    imageId: imageId,
-    component: {
-      cover: false, // Esconde telas de carregamento padrão deles
-      direction: false, // Esconde bússolas para não dar pistas fáceis
-      sequence: true, // Mantém as setas para o jogador andar pela rua
-    },
-  })
+  // Se não mudou o token ou ele está vazio, avisa na tela de forma amigável
+  if (
+    !MAPILLARY_ACCESS_TOKEN ||
+    MAPILLARY_ACCESS_TOKEN === "SEU_CLIENT_TOKEN_AQUI"
+  ) {
+    viewContainer.innerHTML = `
+            <div style="padding: 20px; text-align: center; color: #ffbc00; font-weight: bold;">
+                <p>Modo de Testes Ativo (Sem Mapa)</p>
+                <p style="font-size: 0.9rem; font-weight: normal; margin-top: 10px; color: #eee;">
+                    O cronômetro abaixo está rodando! Quando chegar a 0, você poderá adivinhar o país.
+                </p>
+            </div>`
+    return
+  }
+
+  // Tenta carregar o mapa dentro de um bloco try/catch para não travar o cronômetro se falhar
+  try {
+    if (typeof mapillary !== "undefined" && mapillary.Viewer) {
+      viewContainer.innerHTML = "" // Limpa textos anteriores
+      mlyViewer = new mapillary.Viewer({
+        accessToken: MAPILLARY_ACCESS_TOKEN,
+        container: "street-view-container",
+        imageId: imageId,
+        component: {
+          cover: false,
+          direction: false,
+          sequence: true,
+        },
+      })
+    } else {
+      throw new Error("Biblioteca Mapillary não encontrada")
+    }
+  } catch (error) {
+    console.error("Erro ao carregar o mapa:", error)
+    viewContainer.innerHTML = `
+            <div style="padding: 20px; text-align: center; color: #ff4a4a;">
+                <p>Erro ao renderizar o mapa 3D.</p>
+                <p style="font-size: 0.85rem; color: #ccc; margin-top: 10px;">
+                    Isso geralmente ocorre se o navegador bloquear o WebGL ou se o Token estiver incorreto. 
+                    O jogo continuará normalmente em modo de texto!
+                </p>
+            </div>`
+  }
 }
 
 /* ==========================================================================
    4. LÓGICA DO FLUXO DO JOGO
    ========================================================================== */
 function iniciarNovoJogo() {
-  // 1. Limpar estados anteriores
+  // Força a limpeza de qualquer intervalo anterior antes de começar
   clearInterval(cronometroInterval)
+
   gridContainer.innerHTML = ""
   tentativaAtual = 0
   letraAtualIndex = 0
   tempoRestante = 30
   countdownEl.textContent = tempoRestante
 
-  // Resetar cores do teclado virtual
   document.querySelectorAll(".key-btn").forEach((btn) => {
     btn.className =
       "key-btn" + (btn.classList.contains("special-key") ? " special-key" : "")
   })
 
-  // 2. Escolher país aleatório
   paisAtual = BANCO_PAISES[Math.floor(Math.random() * BANCO_PAISES.length)]
   palavraSecreta = paisAtual.nome.toUpperCase()
   letterCountEl.textContent = palavraSecreta.length
 
-  // 3. Configurar Telas (Mostrar Mapa, Esconder Chutes e Modal)
   mapPhaseSec.classList.remove("hidden")
   guessPhaseSec.classList.add("hidden")
   modalContainer.classList.add("hidden")
 
-  // 4. Verificar Token e Carregar o Mapa
-  if (MAPILLARY_ACCESS_TOKEN === "SEU_CLIENT_TOKEN_AQUI") {
-    document.getElementById("street-view-container").innerHTML =
-      "<p style='padding:20px; text-align:center; color:red;'>Substitua 'SEU_CLIENT_TOKEN_AQUI' no topo do script.js com seu token do Mapillary!</p>"
-  } else {
-    carregarMapillary(paisAtual.imageId)
-  }
-
+  // 1. Primeiro inicia o cronômetro para garantir que ele NUNCA trave
   iniciarCronometro()
+
+  // 2. Depois tenta carregar o mapa
+  carregarMapillary(paisAtual.imageId)
 }
 
 function iniciarCronometro() {
@@ -122,9 +151,12 @@ function encerrarFaseMapa() {
   mapPhaseSec.classList.add("hidden")
   guessPhaseSec.classList.remove("hidden")
 
-  // Destrói o mapa ao fechar para poupar desempenho do navegador
   if (mlyViewer) {
-    mlyViewer.remove()
+    try {
+      mlyViewer.remove()
+    } catch (e) {
+      console.log(e)
+    }
     mlyViewer = null
   }
 
@@ -308,5 +340,4 @@ function finalizarJogo(ganhou) {
 skipBtn.addEventListener("click", encerrarFaseMapa)
 restartBtn.addEventListener("click", iniciarNovoJogo)
 
-// Inicia o jogo assim que a página estiver pronta
 window.addEventListener("DOMContentLoaded", iniciarNovoJogo)
